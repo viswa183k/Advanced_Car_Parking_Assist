@@ -1,0 +1,58 @@
+#define TRIG_PIN 9
+#define ECHO_PIN 10
+#define BUZZER_PIN 8
+#define LED_GREEN 5
+#define LED_YELLOW 6
+#define LED_RED 7
+
+long duration;
+int distance;
+
+void setup() {
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_GREEN, OUTPUT);
+  pinMode(LED_YELLOW, OUTPUT);
+  pinMode(LED_RED, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance > 50) {
+    digitalWrite(LED_GREEN, HIGH);
+    digitalWrite(LED_YELLOW, LOW);
+    digitalWrite(LED_RED, LOW);
+    noTone(BUZZER_PIN);
+  } else if (distance <= 50 && distance > 20) {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, HIGH);
+    digitalWrite(LED_RED, LOW);
+    tone(BUZZER_PIN, 500);
+  } else if (distance <= 20 && distance > 5) {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, LOW);
+    digitalWrite(LED_RED, HIGH);
+    tone(BUZZER_PIN, 1000);
+  } else {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, LOW);
+    digitalWrite(LED_RED, HIGH);
+    tone(BUZZER_PIN, 2000);  // Danger alert
+  }
+
+  delay(200);
+}
